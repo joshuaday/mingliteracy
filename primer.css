@@ -1,0 +1,192 @@
+body {
+	margin:50px 0px;
+	padding:0px;
+	text-align:center;
+	
+	background-color:#ddddc8;
+	
+	color: #222208;
+}
+
+.center-column {
+	max-width:1100px;
+	max-height:800px;
+	
+	width:90%;
+	height:95%;
+	
+	margin:0px auto;
+	text-align:left;
+	
+	border:2px solid #33331a;
+	background-color: #fffff6;
+	
+	line-height: 1.8em;
+	
+	overflow: hidden;
+	
+	position: relative;
+}
+
+.left-panel {
+	display:inline-block;
+	
+	width:55%;
+	overflow-x:hidden;
+	overflow-y:scroll;
+	
+	height:100%;
+	
+	position: absolute;
+}
+
+.right-panel {
+	display:inline-block;
+	height:100%;
+	
+	left: 55%;
+	width: 45%;
+	
+	overflow:hidden;
+	
+	position: absolute;
+}
+
+.dictionary-box {
+	height:6.0em;
+	width: 90%;
+	left: 5%;
+	top: 1em;
+	
+	line-height:1.5em;
+	
+	border: 2px solid #33331a;
+	background-color: #fffffd;
+	
+	position: relative;
+	
+	overflow: hidden;
+}
+
+.character-box {
+	display:inline-block;
+	
+	width:1.5em;
+	height:1.5em;
+	
+	text-align:center;
+	line-height:1.5em;
+	vertical-align:center;
+	
+	border-right: 2px solid #33331a;
+	
+	font-size:400%;
+	
+	position: absolute;
+}
+
+.definition-box {
+	display:inline-block;
+	
+	padding: .25em;
+	overflow: hidden;
+	
+	text-align:left;
+	line-height:1.5em;
+	vertical-align:top;
+
+	background-color: #fffffd;
+	
+	position: absolute;
+	left: 6.5em;
+	top: 0em;
+}
+
+.character-infobox {
+	display: inline-block;
+	position: absolute;
+	left: 5%;
+	top: 8em;
+	
+	width: 90%;
+}
+
+.pinyin {
+	font-weight: bold;
+	padding-right: .5em;
+}
+
+.tang {
+	font-style: italic;
+	padding-right: .5em;
+}
+
+.source-text span {
+	cursor: default;
+}
+
+.glyph-unknown {
+	background-color: #222211;
+	color: #ff5511;
+}
+
+.glyph-rare {
+	background-color: #888856;
+	color: #ffff33;
+}
+
+.reference {
+	border-bottom: 2px solid red;
+}
+
+.highlight {
+}
+
+
+.source {
+	margin-left: .25em;
+	margin-right: .25em;
+	
+	padding-left: .25em;
+	padding-right: .25em;
+	
+	margin-top: .25em;
+
+	border: 1px solid #33331a;
+}
+
+.source-info {
+	padding: 2px;
+	border-bottom:
+}
+
+.source-text {
+	padding: 2px;
+	padding-bottom: .5em;
+}
+
+
+.button-text {
+	font-size: 10px;
+	font-weight: bold;
+	
+	background-color: #bbbb88;
+	border: 1px solid #33331a;
+	
+	display: inline-block;
+	
+	line-height: 1em;
+	padding: 4px;
+	
+	margin-right: .5em;
+	
+	cursor: pointer;
+}
+
+.primer-included {
+
+}
+
+.primer-excluded {
+	background-color: #999977;
+}
