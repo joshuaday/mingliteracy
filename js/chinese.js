@@ -114,11 +114,10 @@
 	}
 	
 	function getCssClass(ch) {
+		// this function used to do more, but the wider variety of styling proved to be overwhelming in practice
 		var histogram = getActiveHistogram(ch);
 		if (histogram.sources == 0) {
 			return "glyph-unknown";
-		} else if (histogram.count < 3) {
-			return "glyph-rare";
 		}
 	}
 	
@@ -146,21 +145,32 @@
 		return doc.infodiv;
 		
 		function populateSourceText() {
-			var div = create("DIV", "source-text");
+			doc.textdiv = create("DIV", "source-text");
 			
-			doc.textdiv = div;
-			
+			var segment = [ ];
 			for (j = 0; j < doc.text.length; j++) {
 				var ch = doc.text.substr(j, 1);
 				
 				if (unihan[ch]) {
-					var span = create("SPAN", getCssClass(ch));
-					span.text(ch);
-					span.hover(enterChar, exitChar);
-					div.append(span);
-					div.append(create("WBR")); // allow a word break anywhere for now
+					// now, instead of this, which takes a long time, it will be better to append the text directly
+					
+					//var span = create("SPAN", getCssClass(ch));
+					//span.text(ch);
+					//span.hover(enterChar, exitChar);
+					//div.append(span);
+					//div.append(create("WBR")); // allow a word break anywhere for now
+					
+					segment.push("<span class='", getCssClass(ch), "'>", ch, "</span><wbr>");
+				} else {
+					segment.push("<span class=glyph-rare>", ch, "</span>");
 				}
+				
+				
+				//segment.push(ch);
 			}
+			
+			
+			doc.textdiv.html(segment.join(""));
 			
 			doc.div.append(doc.textdiv);
 		}

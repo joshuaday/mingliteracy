@@ -2,8 +2,17 @@ local encodings = require "encodings"
 local utf8 = require "utf-8"
 local json = require "json"
 
+local builder = require "builder"
+
+--local sb = builder.new()
+--sb:append("Hello "):append("there"):append("!", "  ", "You are my friend.")
+--print (tostring(sb))
+
+
 local function lines(iterator, state)
 	local index
+	
+	local w1, w2, w3 = builder.new(), builder.new(), builder.new()
 	
 	local function getch()
 		local ch
@@ -16,7 +25,6 @@ local function lines(iterator, state)
 			local c = getch()
 		until c == nil or c == string.byte '\n'
 	end
-	
 	
 	local function readline()
 		-- newline
@@ -34,11 +42,13 @@ local function lines(iterator, state)
 		if c == nil then
 			return nil
 		else
-			local w1, w2, w3 = '', '', '' -- terrible : todo - speed this up
+			w1:clear()
+			w2:clear()
+			w3:clear()
 			
 			-- three words, tab separated; find a tab (and bail out if we hit the line end)
 			while true do
-				w1 = w1 .. utf8.encode(c)
+				w1:appendbytes(utf8.encodebytes(c))
 				c = getch()
 				if c == nil or c == string.byte '\n' then
 					return nil
@@ -56,7 +66,7 @@ local function lines(iterator, state)
 				if c == string.byte '\t' then
 					break
 				end
-				w2 = w2 .. utf8.encode(c)
+				w2:appendbytes(utf8.encodebytes(c))
 			end
 			
 			
@@ -68,10 +78,10 @@ local function lines(iterator, state)
 				if c == string.byte '\n' then
 					break
 				end
-				w3 = w3 .. utf8.encode(c)
+				w3:appendbytes(utf8.encodebytes(c))
 			end
 			
-			return w1, w2, w3
+			return tostring(w1), tostring(w2), tostring(w3)
 		end
 	end
 	
@@ -102,7 +112,7 @@ local function addDatabase(filename)
 
 	data = encodings.toUtf8(data)
 	
-	for a, b, c in lines(utf8.chars(data)) do
+	for a, b, c in lines(utf8.chars(data)) do	
 		a = toCodepoint(a)
 			
 		if a ~= nil then

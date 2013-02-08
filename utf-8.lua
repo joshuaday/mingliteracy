@@ -131,30 +131,31 @@ function utf8.codepoint(str, idx)
 	end
 end
 
-function utf8.encode(codepoint)
+function utf8.encodebytes(codepoint)
 	if codepoint < 0x80 then
-		return string.char(codepoint)
+		return codepoint
 	elseif codepoint < 0x0800 then
-		return string.char(
+		return 
 			bit.bor(0xc0, bit.band(0x1f, bit.rshift(codepoint, 6))),
 			bit.bor(0x80, bit.band(0x3f, codepoint))
-		)
 	elseif codepoint < 0x010000 then
-		return string.char(
+		return
 			bit.bor(0xe0, bit.band(0x0f, bit.rshift(codepoint, 12))),
 			bit.bor(0x80, bit.band(0x3f, bit.rshift(codepoint, 6))),
 			bit.bor(0x80, bit.band(0x3f, codepoint))
-		)
 	elseif codepoint < 0x200000 then
-		return string.char(
+		return 
 			bit.bor(0xf0, bit.band(0x07, bit.rshift(codepoint, 18))),
 			bit.bor(0x80, bit.band(0x3f, bit.rshift(codepoint, 12))),
 			bit.bor(0x80, bit.band(0x3f, bit.rshift(codepoint, 6))),
 			bit.bor(0x80, bit.band(0x3f, codepoint))
-		)
 	else
-		return ""
+		return nil
 	end
+end
+
+function utf8.encode(codepoint)
+	return string.char(utf8.encodebytes(codepoint))
 end
 
 function utf8.html(str)

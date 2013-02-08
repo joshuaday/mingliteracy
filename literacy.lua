@@ -69,8 +69,8 @@ local function lexicon()
 		
 		if options.reference then
 			print ("Reference: " .. filename)
-			
-			local histogram = { }; -- this gets written directly for js consumption
+			 
+			local histogram = { } -- this gets written directly for js consumption
 			local charnum = 0
 			for i, char in utf8.chars(data) do
 				charnum = charnum + 1
@@ -89,7 +89,7 @@ local function lexicon()
 						store[char] = entry
 					end
 					
-					entry[1 + #entry] = {document, i} -- in this document, at position i (might want to include the encoding?)
+					entry[1 + #entry] = {document, i} -- in this document, at position i (might want to include the encoding?) -- no, because output is always utf8
 					
 					histogram[as_utf8] = 1 + (histogram[as_utf8] or 0)
 					
