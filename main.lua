@@ -15,7 +15,6 @@ local primers = literacy.lexicon()
 
 local ZWSP = 0x200B -- zero-width space
 
-
 local csv = require "csv"
 
 csv.addDatabase "unicode/Unihan_Readings.txt"
