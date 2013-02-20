@@ -17,4 +17,11 @@ function encodings.lines(filename)
 	
 end
 
+local mt = {
+	
+}
+
+-- local function wrap_string_type(
+
 return encodings
+

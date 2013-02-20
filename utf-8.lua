@@ -177,3 +177,4 @@ function utf8.chars(str)
 end
 
 return utf8
+

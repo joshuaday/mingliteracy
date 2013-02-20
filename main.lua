@@ -1,3 +1,5 @@
+#! /usr/bin/env luajit
+
 local literacy = require "literacy"
 local paths = require "paths"
 local html = require "html"
