@@ -1,9 +1,11 @@
+* text=auto
+
 *.txt	text
 *.lua	text
 *.html	text
 *.h		text
 *.js	text
 *.css	text
-*.bat	eol=crlf
-*.sh	eol=lf
+*.bat	text eol=crlf
+*.sh	text eol=lf
 
