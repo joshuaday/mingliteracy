@@ -32,7 +32,7 @@
 				for (i = 0; i < digest.documents.length; i++) {
 					var doc = digest.documents[i];
 					if (doc.isIncluded && doc.histogram[ch]) {
-						infobox.append(doc.filename + "<br>");
+						infobox.append((doc.tags.title || doc.filename) + "<br>");
 					}
 				}				
 			} else {
@@ -42,7 +42,7 @@
 				for (i = 0; i < digest.documents.length; i++) {
 					var doc = digest.documents[i];
 					if (doc.isIncluded && doc.histogram[ch]) {
-						infobox.append(doc.histogram[ch] + " in " + doc.filename + "<br>");
+						infobox.append(doc.histogram[ch] + " in " + (doc.tags.title || doc.filename) + "<br>");
 					}
 				}
 			}
@@ -56,16 +56,32 @@
 			),
 				infobox
 			);
+		} else {
+			rightPanel.empty();
 		}
 	}
 	
+	var previousTarget;
+	function setTarget(target) {
+		if (previousTarget != target) {
+			if (previousTarget) {
+				$(previousTarget).removeClass("reference");
+			}
+			if (target && $(target).hasClass("zh")) {
+				$(target).addClass("reference");
+				fillRightPanel($(target).text());
+			}
+
+			previousTarget = target;
+		}
+	}
+
 	function enterChar(e) {
-		$(e.target).addClass("reference");
-		fillRightPanel($(e.target).text());
+		setTarget(e.target);
 	}
 	
 	function exitChar(e) {
-		$(e.target).removeClass("reference");
+		setTarget(null);
 	}
 	
 	
@@ -136,7 +152,7 @@
 		doc.setIncluded = setIncluded;
 		doc.rerender = rerender;
 	
-		doc.infodiv = create("DIV", "source-info", togglebutton, includebutton, doc.filename);
+		doc.infodiv = create("DIV", "source-info", togglebutton, includebutton, doc.tags.title || doc.filename);
 		
 		if (doc.isPrimer) {
 			doc.infodiv.addClass(doc.isIncluded ? "primer-included" : "primer-excluded");
@@ -148,30 +164,18 @@
 			doc.textdiv = create("DIV", "source-text");
 			
 			var segment = [ ];
-			for (j = 0; j < doc.text.length; j++) {
-				var ch = doc.text.substr(j, 1);
+			var text = doc.tags.body || "";
+			for (j = 0; j < text.length; j++) {
+				var ch = text.substr(j, 1);
 				
-				if (unihan[ch]) {
-					// now, instead of this, which takes a long time, it will be better to append the text directly
-					
-					//var span = create("SPAN", getCssClass(ch));
-					//span.text(ch);
-					//span.hover(enterChar, exitChar);
-					//div.append(span);
-					//div.append(create("WBR")); // allow a word break anywhere for now
-					
-					segment.push("<span class='", getCssClass(ch), "'>", ch, "</span><wbr>");
-				} else {
-					segment.push("<span class=glyph-rare>", ch, "</span>");
-				}
-				
-				
-				//segment.push(ch);
+				segment.push("<span class='zh ", getCssClass(ch), "'>", ch, "</span><wbr>");
 			}
 			
 			
 			doc.textdiv.html(segment.join(""));
 			
+			doc.textdiv.mousemove(enterChar); //, exitChar);
+			doc.textdiv.hover(enterChar, exitChar);
 			doc.div.append(doc.textdiv);
 		}
 		

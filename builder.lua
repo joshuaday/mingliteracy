@@ -87,4 +87,13 @@ function builder.new(...)
 	return s
 end
 
+function builder.estimate(estimated_max)
+	s = setmetatable({}, mt)
+	rawset(s, "length", 0)
+	rawset(s, "bufferlength", math.ceil(256 + estimated_max))
+	rawset(s, "buffer", newchar(s.bufferlength))
+	
+	return s
+end
+
 return builder

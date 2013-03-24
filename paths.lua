@@ -84,6 +84,12 @@ else
 	end
 
 	local function matcheswildcard(str, pat)
+		-- hidden file check first
+		if string.byte(str, 1) == string.byte "." and string.byte(pat, 1) ~= string.byte "." then
+			return false
+		end
+
+		-- wildly suboptimal
 		pat = pat:lower():gsub("%.", "%."):gsub("%*", ".+")
 		if str:lower():match(pat) then
 			return true
@@ -105,7 +111,7 @@ else
 		if dp ~= nil then
 			ffi.gc(dp, ffi.C.closedir)
 
-			local statbuf = ffi.new("struct stat")
+			local statbuf = ffi.new "struct stat"
 
 			while true do
 				local ep = ffi.C.readdir(dp)
