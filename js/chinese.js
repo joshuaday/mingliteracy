@@ -36,7 +36,10 @@
 					}
 				}				
 			} else {
-				infobox.append("Appears " + getActiveHistogram(ch).count + " times in selected primers.<br>");
+				infobox.append(
+					"Appears "
+					+ (histogram.count == 2 ? "twice " : (histogram.count + " times "))
+					+ "in selected primers.<br>");
 				
 				var i;
 				for (i = 0; i < digest.documents.length; i++) {
@@ -94,7 +97,7 @@
 		for (i = 0; i < digest.documents.length; i++) {
 			var doc = digest.documents[i];
 			
-			if (!doc.isPrimer && doc.rerender) {
+			if (doc.rerender) {
 				doc.rerender();
 			}
 		}
@@ -174,24 +177,27 @@
 			
 			doc.textdiv.html(segment.join(""));
 			
-			doc.textdiv.mousemove(enterChar); //, exitChar);
+			doc.textdiv.mousemove(enterChar);
 			doc.textdiv.hover(enterChar, exitChar);
+
 			doc.div.append(doc.textdiv);
 		}
 		
 		function rerender() {
-			if (doc.isExpanded) {
+			if (doc.textdiv) {
 				doc.textdiv.remove();
 				doc.textdiv = null;
-				
+			}
+			if (doc.isExpanded) {
 				populateSourceText();
 			}
 		}
 		
 		function setExpanded(v) {
 			if (!!v === !!doc.isExpanded) return;
+			doc.isExpanded = !!v;
 			
-			if (v) {
+			if (doc.isExpanded) {
 				if (!doc.textdiv) {
 					populateSourceText();
 				} else {
@@ -202,15 +208,15 @@
 				doc.textdiv.hide();
 				togglebutton.text("show");
 			}
-			
-			doc.isExpanded = !!v;
 		}
 		
 		function setIncluded(v) {
 			if (!doc.isPrimer) return;
+
 			if (!!v === !!doc.isIncluded) return;
+			doc.isIncluded = !!v;
 			
-			if (v) {
+			if (doc.isIncluded) {
 				includebutton.text("exclude");
 				doc.infodiv.addClass("primer-included").removeClass("primer-excluded");
 			} else {
@@ -218,7 +224,6 @@
 				doc.infodiv.addClass("primer-excluded").removeClass("primer-included");
 			}
 						
-			doc.isIncluded = !!v;
 			resetHistograms();
 		}
 		
