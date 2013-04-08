@@ -48,15 +48,34 @@
 	}
 	
 	function statCompute() {
-		var div = create(div);
+		var i, j;
+		var segment = [];
 
 		var stats = { }
+
+		segment.push("<table>");
+
+
+		segment.push("<tr><td>&nbsp;</td>");
+		for (j = 0; j < digest.documents.length; j++) {
+			var B = digest.documents[j];
+			if (!B.isPrimer) continue;
+			segment.push("<td>", B.tags.title, "</td>");
+		}
+		segment.push("</tr>");
+
+
 		for (i = 0; i < digest.documents.length; i++) {
 			var A = digest.documents[i];
+			if (A.isPrimer) continue;
 			var cross = { }
+			segment.push("<tr>");
+			segment.push("<td>", A.tags.title, "</td>");
 			stats[A.tags.title] = cross;
 			for (j = 0; j < digest.documents.length; j++) {
 				var B = digest.documents[j];
+				if (!B.isPrimer) continue;
+
 				var cell = {
 					unique_chars: 0,
 					known_chars: 0
@@ -69,11 +88,16 @@
 					} else {
 					}
 				}
+
+				cell.pct = Math.floor(100 * cell.known_chars / cell.unique_chars);
+				segment.push("<td>", cell.pct, "</td>");
 			}
+			segment.push("</tr>");
 		}
+		segment.push("</table>");
 		console.dir(stats);
 
-		return div;
+		return create("DIV", null, segment.join(""));
 	}
 	
 	var previousTarget;
@@ -307,6 +331,7 @@
 	function statsMode() {
 		fillRightPanel = function(ch) {
 			rightPanel.empty();
+			rightPanel.append(statCompute());
 		}
 
 		fillRightPanel();
@@ -375,7 +400,6 @@
 			// console.log("Visiting: " + i);
 		}
 
-		leftPanel.append(statCompute());
 		infoMode();
 		
 		$("body").append(centercolumn);
