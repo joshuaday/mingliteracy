@@ -1,5 +1,5 @@
 (function ($) {
-	var leftPanel, rightPanel;
+	var leftPanel, rightPanel, fillRightPanel;
 
 	function create(nn, c) {
 		var e = $(document.createElement(nn));
@@ -13,55 +13,42 @@
 		}
 		return e;
 	}
+
+	function printMode() {
+		var column = leftPanel;
+		// print-mode
+		var nw = window.open(null, "pmode", "location=no", null);
+		nw.document.write("<html><head><title>Print</title></head><body>" + column.html() + "</body></html>");
+		nw.focus();
+	}
 	
-	function fillRightPanel(ch) {
-		var uni = unihan[ch];
-		if (uni) {
-			rightPanel.empty();
-			
-			var infobox = create("DIV", "character-infobox");
-			
-			var histogram = getActiveHistogram(ch);
-			
-			if (histogram.count == 0) {
-				infobox.append("Never appears in selected primers.<br>");
-			} else if (histogram.count == 1) {
-				infobox.append("Appears once, in ");
-				
-				var i;
-				for (i = 0; i < digest.documents.length; i++) {
-					var doc = digest.documents[i];
-					if (doc.isIncluded && doc.histogram[ch]) {
-						infobox.append((doc.tags.title || doc.filename) + "<br>");
-					}
-				}				
-			} else {
-				infobox.append(
-					"Appears "
-					+ (histogram.count == 2 ? "twice " : (histogram.count + " times "))
-					+ "in selected primers.<br>");
-				
-				var i;
-				for (i = 0; i < digest.documents.length; i++) {
-					var doc = digest.documents[i];
-					if (doc.isIncluded && doc.histogram[ch]) {
-						infobox.append(doc.histogram[ch] + " in " + (doc.tags.title || doc.filename) + "<br>");
+	function statCompute() {
+		var div = create(div);
+
+		var stats = { }
+		for (i = 0; i < digest.documents.length; i++) {
+			var A = digest.documents[i];
+			var cross = { }
+			stats[A.tags.title] = cross;
+			for (j = 0; j < digest.documents.length; j++) {
+				var B = digest.documents[j];
+				var cell = {
+					unique_chars: 0,
+					known_chars: 0
+				}
+				cross[B.tags.title] = cell;
+				for (k in A.histogram) {
+					cell.unique_chars++;
+					if (B.histogram[k]) {
+						cell.known_chars++;
+					} else {
 					}
 				}
 			}
-			
-			rightPanel.append (create("DIV", "dictionary-box",
-				create("DIV", "character-box", ch),
-				create("DIV", "definition-box", create("SPAN", "pinyin", uni.kMandarin), 
-				(uni.kTang ? create("SPAN", "tang", uni.kTang) : null),
-				create("BR"),
-				uni.kDefinition)
-			),
-				infobox
-			);
-		} else {
-			rightPanel.empty();
 		}
+		console.dir(stats);
+
+		return div;
 	}
 	
 	var previousTarget;
@@ -155,7 +142,12 @@
 		doc.setIncluded = setIncluded;
 		doc.rerender = rerender;
 	
-		doc.infodiv = create("DIV", "source-info", togglebutton, includebutton, doc.tags.title || doc.filename);
+		doc.infodiv = create("DIV", "source-info",
+			togglebutton, includebutton,
+			(doc.tags.title || doc.filename),
+			create("SPAN", null, "&#12288;&#12288;&#12288;"),
+			(doc.tags.author || "")
+		);
 		
 		if (doc.isPrimer) {
 			doc.infodiv.addClass(doc.isIncluded ? "primer-included" : "primer-excluded");
@@ -236,6 +228,79 @@
 		}
 	}
 
+	function infoMode() {
+		// this is the initial mode, in which 
+		fillRightPanel = function(ch) {
+			var uni = unihan[ch];
+			if (uni) {
+				rightPanel.empty();
+				
+				var infobox = create("DIV", "character-infobox");
+				
+				var histogram = getActiveHistogram(ch);
+				
+				if (histogram.count == 0) {
+					infobox.append("Never appears in selected primers.<br>");
+				} else if (histogram.count == 1) {
+					infobox.append("Appears once, in ");
+					
+					var i;
+					for (i = 0; i < digest.documents.length; i++) {
+						var doc = digest.documents[i];
+						if (doc.isIncluded && doc.histogram[ch]) {
+							infobox.append((doc.tags.title || doc.filename) + "<br>");
+						}
+					}				
+				} else {
+					infobox.append(
+						"Appears "
+						+ (histogram.count == 2 ? "twice " : (histogram.count + " times "))
+						+ "in selected primers.<br>");
+					
+					var i;
+					for (i = 0; i < digest.documents.length; i++) {
+						var doc = digest.documents[i];
+						if (doc.isIncluded && doc.histogram[ch]) {
+							infobox.append(doc.histogram[ch] + " in " + (doc.tags.title || doc.filename) + "<br>");
+						}
+					}
+				}
+				
+				rightPanel.append (create("DIV", "dictionary-box",
+					create("DIV", "character-box", ch),
+					create("DIV", "definition-box", create("SPAN", "pinyin", uni.kMandarin), 
+					(uni.kTang ? create("SPAN", "tang", uni.kTang) : null),
+					create("BR"),
+					uni.kDefinition)
+				),
+					infobox
+				);
+			} else {
+				rightPanel.empty();
+			}
+		}
+		fillRightPanel();
+	}
+	function statsMode() {
+		fillRightPanel = function(ch) {
+			rightPanel.empty();
+		}
+
+		fillRightPanel();
+	}
+
+	function rightHandToolBar() {
+		var div = create("DIV", "toolbar");
+		
+		div.append(
+			create("DIV", "button-text", "info").click(infoMode),
+			create("DIV", "button-text", "stats").click(statsMode),
+			create("DIV", "button-text", "print").click(printMode)
+		);
+
+		return div;
+	}
+
 	$().ready(function() {
 		// $(".text").addClass("unknown");
 		// console.log($(".text").text());
@@ -244,13 +309,24 @@
 		centercolumn.addClass("center-column");
 		
 		leftPanel = create("DIV", "left-panel");
-		rightPanel = create("DIV", "right-panel");
+		var rightColumn = create("DIV", "right-panel");
 		
 		centercolumn.append(leftPanel);
-		centercolumn.append(rightPanel);
+		centercolumn.append(rightColumn);
+
+		rightPanel = create("DIV", "right-main");
+		rightColumn.append(rightHandToolBar(), rightPanel);
 		
 		//console.dir(digest.documents);
 		//console.dir(unihan);
+
+		var labelsSeen = { }
+		function addLabel(text) {
+			if (!labelsSeen[text]) {
+				leftPanel.append($("<div class='section-header'>" + text + "</div>"));
+				labelsSeen[text] = true;
+			}
+		}
 		
 		var i;
 		for (i = 0; i < digest.documents.length; i++) {
@@ -259,8 +335,10 @@
 			doc.div = create("DIV", "source", createInfoDiv(doc));
 			
 			if (doc.isPrimer) {
+				addLabel("Primers");
 				doc.setIncluded(true);
 			} else {
+				addLabel("Steles");
 				doc.setExpanded(true);
 			}
 			
@@ -268,6 +346,9 @@
 			
 			// console.log("Visiting: " + i);
 		}
+
+		leftPanel.append(statCompute());
+		infoMode();
 		
 		$("body").append(centercolumn);
 	});

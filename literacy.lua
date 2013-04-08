@@ -83,117 +83,71 @@ local function lexicon()
 
 		if options.reference then
 			io.stdout:write ("Reference: ", filename, "\n")
-			 
-			local histogram = { } -- this gets written directly for js consumption
-
-			for i, char in utf8.chars(data) do
-				if isnewline and char == string.byte ":" then
-					-- start reading a new tag; first commit the previous tag and its chunk, if we had one
-					commit_chunk()
-					tag_builder:clear()
-					tagmode = true
-				elseif tagmode then
-					if isnewline or char == string.byte ":" then
-						tag = tostring(tag_builder)
-						tagmode = false
-					else
-						tag_builder:appendbytes(utf8.encodebytes(char))
-					end
-				elseif filter(char) then
-					charnum = charnum + 1
-
-					local as_utf8 = utf8.encode(char) -- improve this not to return a string
-					text:append(as_utf8) -- copy the character into the output text
-					
-					if tag == "body" then
-						-- process the histogram and rolling trigrams only in the body
-						c1, c2, c3 = c2, c3, char
-					
-						for i = 1 + #store, char - 1 do
-							store[i] = false
-						end
-						
-						local entry = store[char]
-						if not entry then
-							entry = { }
-							store[char] = entry
-						end
-						
-						entry[1 + #entry] = {document, i} -- in this document, at position i (might want to include the encoding?) -- no, because output is always utf8
-						
-						histogram[as_utf8] = 1 + (histogram[as_utf8] or 0)
-						
-						if c1 then
-							local triad = triadize(c1, c2, c3)
-							
-							local entry = triads[triad]
-							if not entry then
-								entry = { }
-								triads[triad] = entry
-							end
-							
-							entry[1 + #entry] = {
-								document = document_index,
-								character = charnum
-							} -- in this document, ending at character number i
-						end
-					end
-				end
-
-				isnewline = char == 10 or char == 13
-			end
-			
-			commit_chunk()
-			document.histogram = histogram
 		else
-			io.stdout:write ("Processing: ", filename, "\n")
-			local callback = options.callback or function () end
-			local charnum = 0
-			
-			for i, char in utf8.chars(data) do
-				local filtered = filter(char)
-				local known = false
+			io.stdout:write ("Document: ", filename, "\n")
+		end
+			 
+		local histogram = { } -- this gets written directly for js consumption
+
+		for i, char in utf8.chars(data) do
+			if isnewline and char == string.byte ":" then
+				-- start reading a new tag; first commit the previous tag and its chunk, if we had one
+				commit_chunk()
+				tag_builder:clear()
+				tagmode = true
+			elseif tagmode then
+				if isnewline or char == string.byte ":" then
+					tag = tostring(tag_builder)
+					tagmode = false
+				else
+					tag_builder:appendbytes(utf8.encodebytes(char))
+				end
+			elseif filter(char) then
+				charnum = charnum + 1
+
+				local as_utf8 = utf8.encode(char) -- improve this not to return a string
+				text:append(as_utf8) -- copy the character into the output text
 				
-				if isnewline and char == string.byte ":" then
-					-- start reading a new tag; first commit the previous tag and its chunk, if we had one
-					commit_chunk()
-					tag_builder:clear()
-					tagmode = true
-				elseif tagmode then
-					if isnewline or char == string.byte ":" then
-						tag = tostring(tag_builder)
-						tagmode = false
-					else
-						tag_builder:appendbytes(utf8.encodebytes(char))
-					end
-				elseif filtered then
-					text:appendbytes(utf8.encodebytes(char))
-
-					charnum = charnum + 1
-
+				if tag == "body" then
+					-- process the histogram and rolling trigrams only in the body
 					c1, c2, c3 = c2, c3, char
-
+				
+					for i = 1 + #store, char - 1 do
+						store[i] = false
+					end
+					
 					local entry = store[char]
 					if not entry then
 						entry = { }
 						store[char] = entry
 					end
 					
+					entry[1 + #entry] = {document, i} -- in this document, at position i (might want to include the encoding?) -- no, because output is always utf8
+					
+					histogram[as_utf8] = 1 + (histogram[as_utf8] or 0)
+					
 					if c1 then
 						local triad = triadize(c1, c2, c3)
+						
 						local entry = triads[triad]
-						if entry then
-							document.references[1 + #document.references] = entry -- maybe not the best?
+						if not entry then
+							entry = { }
+							triads[triad] = entry
 						end
+						
+						entry[1 + #entry] = {
+							document = document_index,
+							character = charnum
+						} -- in this document, ending at character number i
 					end
 				end
-				
-				callback(char, filtered, known, tag)
-				isnewline = char == 10 or char == 13
 			end
 
-			commit_chunk()
+			isnewline = char == 10 or char == 13
 		end
+		
+		commit_chunk()
+		document.histogram = histogram
 	end
 	
 	local function tojson()

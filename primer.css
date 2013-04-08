@@ -190,3 +190,20 @@ body {
 .primer-excluded {
 	background-color: #999977;
 }
+
+.section-header {
+	padding-top: .5em;
+	padding-left: 1em;
+	font-weight: bold;
+	font-variant: small-caps;
+}
+
+.right-main {
+	position: relative;
+}
+
+.toolbar {
+	border-bottom: 1px solid #33331a;
+	padding: 4px;
+}
+

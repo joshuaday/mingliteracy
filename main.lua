@@ -36,9 +36,6 @@ for name, info in paths.files "primers/*.txt" do
 	}
 end
 
-
-local cursors = { } -- one entry for every sequence of characters (including length-1?) that matches the current position -- source document, length so far, index
-
 print "\nSteles:"
 -- process the steles for subphrases
 for name, info in paths.files "steles/*.txt" do
@@ -59,42 +56,5 @@ document.head :node "script" :attr ("type", "text/javascript") :raw "unihan = " 
 
 -- todo : as soon as possible, switch from kMandarin to 
 -- kHanyuPinlu, falling back on kXHC1983 and then kHanyuPinyin. 
-
-
---[[
-for _, data in pairs(primers.documents) do
-	-- add a new div for each document
-	local filename = data.filename
-	
-	local div = document.body:node "div"
-	
-	div :node "div" :class "infobox" :raw (filename)
-	
-	local top = div :node "div" :class "text"
-
-	local function callback(codepoint, ischar, known)
-		--local included = not filter(char) or dictionary[char]
-		
-		if codepoint == 10 or codepoint == 13 then
-			top :raw ("<br/>")
-			return
-		end
-		
-		known = known or not ischar
-		
-		--if spantype ~= known then
-			--if known then
-			--	span = div :node "span" :class "known"
-			--else
-			--	span = div :node "span" :class "unknown"
-			--end
-			
-			--spantype = known
-		--end
-		
-		top :raw (codepoint)
-	end
-end
-]]--
 
 document:writeto "output.html"
