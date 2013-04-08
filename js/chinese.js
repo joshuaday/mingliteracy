@@ -17,8 +17,33 @@
 	function printMode() {
 		var column = leftPanel;
 		// print-mode
-		var nw = window.open(null, "pmode", "location=no", null);
-		nw.document.write("<html><head><title>Print</title></head><body>" + column.html() + "</body></html>");
+		var nw = window.open(null, "pmode", "location=no,width=1200,height=600", null);
+		nw.document.write(
+			"<html><head><title>Print</title>"
+			+ "<style type=\"text/css\">.glyph-unknown {color:rgba(0, 0, 0, .2); !important;}</style>"
+			// + "<style type=\"text/css\" media=\"print\">.glyph-unknown {color: #cececd; text-decoration:underline; !important;}</style>"
+			+ "</head><body>"
+		)
+
+		for (i = 0; i < digest.documents.length; i++) {
+			var doc = digest.documents[i];
+			if (doc.isExpanded) {
+				nw.document.write("<b>" + doc.displayTitle + "</b><br/>");
+
+				var segment = [ ];
+				var text = doc.tags.body || "";
+				for (j = 0; j < text.length; j++) {
+					var ch = text.substr(j, 1);
+					
+					segment.push("<span class='", getCssClass(ch), "'>", ch, "</span><wbr>");
+				}
+			
+				nw.document.write(segment.join(""));
+				nw.document.write("<br/><br/>");
+			}
+		}
+
+		nw.document.write("</body></html>");
 		nw.focus();
 	}
 	
@@ -144,9 +169,7 @@
 	
 		doc.infodiv = create("DIV", "source-info",
 			togglebutton, includebutton,
-			(doc.tags.title || doc.filename),
-			create("SPAN", null, "&#12288;&#12288;&#12288;"),
-			(doc.tags.author || "")
+			doc.displayTitle
 		);
 		
 		if (doc.isPrimer) {
@@ -332,6 +355,11 @@
 		for (i = 0; i < digest.documents.length; i++) {
 			var doc = digest.documents[i];
 			
+			doc.displayTitle =
+				(doc.tags.title || doc.filename) + 
+				"&#12288;&#12288;&#12288;" + 
+				(doc.tags.author || "");
+
 			doc.div = create("DIV", "source", createInfoDiv(doc));
 			
 			if (doc.isPrimer) {
