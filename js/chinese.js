@@ -95,7 +95,7 @@
 			segment.push("</tr>");
 		}
 		segment.push("</table>");
-		console.dir(stats);
+		// console.dir(stats);
 
 		return create("DIV", null, segment.join(""));
 	}
