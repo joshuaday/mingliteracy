@@ -80,3 +80,5 @@ document.head :node "script" :attr ("type", "text/javascript") :raw "unihan = " 
 
 document:writeto "output.html"
 
+print "\nDone.\n"
+
