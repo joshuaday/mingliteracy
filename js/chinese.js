@@ -349,6 +349,34 @@
 		return div;
 	}
 
+	function steleAdder() {
+		var button = create("BUTTON", null, "Process");
+		var div = create("DIV", "source",
+			create("DIV", null, "Paste a new text to process:"),
+			create("DIV", null, create("TEXTAREA")),
+			button
+		);
+
+		button.click(function(e) {
+			var textarea = $("textarea", $(e.target).closest(".source"));
+			if (!textarea.val()) return;
+			var doc = {
+				displayTitle: "(added)",
+				tags: {
+					body: textarea.val(),
+					title: "(added)"
+				}
+			};
+
+			doc.div = create("DIV", "source", createInfoDiv(doc));
+			div.before(doc.div);
+			doc.setExpanded(true);
+			textarea.val("");
+		});
+		
+		return div;
+	}
+
 	$().ready(function() {
 		// $(".text").addClass("unknown");
 		// console.log($(".text").text());
@@ -399,6 +427,8 @@
 			
 			// console.log("Visiting: " + i);
 		}
+
+		leftPanel.append(steleAdder());
 
 		infoMode();
 		

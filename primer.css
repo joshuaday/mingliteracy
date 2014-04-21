@@ -207,3 +207,8 @@ body {
 	padding: 4px;
 }
 
+textarea {
+	width: 90%;
+	height: 100px;
+}
+
