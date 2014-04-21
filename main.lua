@@ -8,7 +8,7 @@ local html = require "html"
 
 local document = html.document()
 
-document.title = [[Chinese Cross-Reference]]
+document.title = [[Late Imperial Primer Literacy Sieve]]
 document.head:node "link" :attr ("rel", "stylesheet") :attr ("type", "text/css") :attr ("href", "primer.css")
 document.head:node "script" :attr ("type", "text/javascript") :attr ("src", "js/jquery-1.7.2.js")
 document.head:node "script" :attr ("type", "text/javascript") :attr ("src", "js/chinese.js")
