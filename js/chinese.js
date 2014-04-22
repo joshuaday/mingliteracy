@@ -67,7 +67,7 @@
 
 		for (i = 0; i < digest.documents.length; i++) {
 			var A = digest.documents[i];
-			if (A.isPrimer) continue;
+			if (A.isPrimer || A.wasAdded) continue;
 			var cross = { }
 			segment.push("<tr>");
 			segment.push("<td class='stele'>", A.tags.title, "</td>");
@@ -365,13 +365,16 @@
 				tags: {
 					body: textarea.val(),
 					title: "(added)"
-				}
+				},
+				wasAdded: true
 			};
 
 			doc.div = create("DIV", "source", createInfoDiv(doc));
 			div.before(doc.div);
 			doc.setExpanded(true);
 			textarea.val("");
+
+			digest.documents.push(doc);
 		});
 		
 		return div;
