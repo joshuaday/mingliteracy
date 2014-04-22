@@ -53,14 +53,14 @@
 
 		var stats = { }
 
-		segment.push("<table>");
+		segment.push("<table class='stat-table'>");
 
 
 		segment.push("<tr><td>&nbsp;</td>");
 		for (j = 0; j < digest.documents.length; j++) {
 			var B = digest.documents[j];
 			if (!B.isPrimer) continue;
-			segment.push("<td>", B.tags.title, "</td>");
+			segment.push("<td class='stat-primer'>", (B.tags.title || "").substr(0,4).split("").join("<br>"), "</td>");
 		}
 		segment.push("</tr>");
 
@@ -70,7 +70,7 @@
 			if (A.isPrimer) continue;
 			var cross = { }
 			segment.push("<tr>");
-			segment.push("<td>", A.tags.title, "</td>");
+			segment.push("<td class='stele'>", A.tags.title, "</td>");
 			stats[A.tags.title] = cross;
 			for (j = 0; j < digest.documents.length; j++) {
 				var B = digest.documents[j];

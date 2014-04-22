@@ -212,3 +212,18 @@ textarea {
 	height: 100px;
 }
 
+.stat-table td {
+	text-align: center;
+	padding-right: 5px;
+}
+.stat-table td.stele {
+	text-align: right;
+	font-weight:bold;
+	font-size: 80%;
+}
+
+.stat-table td.stat-primer {
+	font-size: 80%;
+	font-weight:bold;
+}
+
