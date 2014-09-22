@@ -1,5 +1,5 @@
 #! /usr/bin/env luajit
-
+--testline
 local argreader = require "argreader"
 local arguments = argreader.parse(arg)
 
