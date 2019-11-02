@@ -256,10 +256,10 @@
 			doc.isIncluded = !!v;
 			
 			if (doc.isIncluded) {
-				includebutton.text("exclude");
+				includebutton.text("reader knows this primer (click to exclude)");
 				doc.infodiv.addClass("primer-included").removeClass("primer-excluded");
 			} else {
-				includebutton.text("include");
+				includebutton.text("reader does not know this primer (click to include)");
 				doc.infodiv.addClass("primer-excluded").removeClass("primer-included");
 			}
 						
