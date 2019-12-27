@@ -5,13 +5,7 @@ Designed for Professor Schneewind's Primer Literacy project, this program filter
 
 ## Running the Sieve
 To run this software you will need to obtain a build of LuaJIT suitable for
-your computer.
-
-* On Windows: run launch.bat.
-
-* On OSX: run osx-launch.sh.
-
-* On Linux: run main.lua directly.
+your computer. If you are on Windows, run `launch.bat`; otherwise, use `launch.sh`.
 
 ## Adding a Text
 
